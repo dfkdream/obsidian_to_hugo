@@ -16,10 +16,10 @@ func TestFromFile(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			"FromFile",
+			"test site",
 			args{filename: "../test_site/config.yml"},
 			Config{
-				BaseURL: "https://blog.dfkdream.dev",
+				BaseURL: "http://testsite.local",
 				IgnoreFiles: []string{
 					"templates",
 				},

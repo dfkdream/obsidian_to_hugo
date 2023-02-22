@@ -1,0 +1,7 @@
+baseURL: "http://testsite.local"
+
+ignoreFiles:
+  - templates
+
+permalinks:
+  posts: /:2006/:01/:02/:filename
