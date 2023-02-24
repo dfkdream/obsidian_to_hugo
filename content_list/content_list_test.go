@@ -2,6 +2,7 @@ package contentList
 
 import (
 	"obsidian_md/config"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -9,6 +10,10 @@ import (
 
 func TestFromDirectory(t *testing.T) {
 	testSiteConfig, _ := config.FromFile("../test_site/config.yml")
+	loc, _ := time.LoadLocation("Asia/Seoul")
+	fTime := time.Date(2023, time.February, 23, 23, 16, 25, 822648616, loc)
+	_ = os.Chtimes("../test_site/content/posts2/post5.md", fTime, fTime)
+
 	type args struct {
 		path   string
 		config config.Config
@@ -82,6 +87,9 @@ func TestFromDirectory(t *testing.T) {
 
 func Test_getTimeFromFile(t *testing.T) {
 	loc, _ := time.LoadLocation("Asia/Seoul")
+	fTime := time.Date(2023, time.February, 23, 23, 16, 25, 822648616, loc)
+	_ = os.Chtimes("../test_site/content/posts2/post5.md", fTime, fTime)
+
 	type args struct {
 		path string
 	}
@@ -104,7 +112,7 @@ func Test_getTimeFromFile(t *testing.T) {
 			args: args{
 				path: "../test_site/content/posts2/post5.md",
 			},
-			want:    time.Date(2023, time.February, 23, 23, 16, 25, 822648616, loc),
+			want:    fTime,
 			wantErr: false,
 		},
 	}
