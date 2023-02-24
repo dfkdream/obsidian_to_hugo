@@ -41,10 +41,6 @@ func (c Content) HugoIdentifier() string {
 }
 
 func (c Content) ObsidianIdentifier() string {
-	if !strings.HasSuffix(c.dirEntry.Name(), ".md") {
-		return c.relPath
-	}
-
 	return strings.TrimSuffix(c.relPath, ".md")
 }
 
