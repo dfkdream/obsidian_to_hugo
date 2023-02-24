@@ -1,4 +1,4 @@
-package contentList
+package content
 
 import (
 	"bufio"
@@ -13,8 +13,39 @@ import (
 )
 
 type Content struct {
-	ObsidianIdentifier string
-	HugoIdentifier     string
+	FrontMatter map[string]string
+	Body        string
+	dirEntry    os.DirEntry
+	fileInfo    os.FileInfo
+	permalink   string
+	relPath     string
+}
+
+func (c Content) HugoIdentifier() string {
+	if !strings.HasSuffix(c.dirEntry.Name(), ".md") {
+		return "/" + c.relPath
+	}
+
+	if c.permalink == "" {
+		return "/" + strings.TrimSuffix(c.relPath, ".md") + "/"
+	}
+
+	trimmedName := strings.TrimSuffix(c.dirEntry.Name(), ".md")
+
+	t, err := time.Parse("2006-01-02 15:04:05 -0700", c.FrontMatter["date"])
+	if err != nil {
+		return expandPermalink(c.permalink, c.fileInfo.ModTime(), trimmedName) + "/"
+	}
+
+	return expandPermalink(c.permalink, t, trimmedName) + "/"
+}
+
+func (c Content) ObsidianIdentifier() string {
+	if !strings.HasSuffix(c.dirEntry.Name(), ".md") {
+		return c.relPath
+	}
+
+	return strings.TrimSuffix(c.relPath, ".md")
 }
 
 func FromDirectory(root string, config config.Config) ([]Content, error) {
@@ -46,33 +77,16 @@ func FromDirectory(root string, config config.Config) ([]Content, error) {
 			}
 
 			relPath, _ := filepath.Rel(root, path)
+			fi, _ := os.Stat(path)
 
-			if strings.HasSuffix(path, ".md") {
-				// if markdown file
-				t, err := getTimeFromFile(path)
-				if err != nil {
-					return err
-				}
-
-				if permalink == "" {
-					result = append(result, Content{
-						ObsidianIdentifier: strings.TrimSuffix(relPath, ".md"),
-						HugoIdentifier:     "/" + strings.TrimSuffix(relPath, ".md") + "/",
-					})
-				} else {
-					result = append(result, Content{
-						ObsidianIdentifier: strings.TrimSuffix(relPath, ".md"),
-						HugoIdentifier:     expandPermalink(permalink, t, strings.TrimSuffix(d.Name(), ".md")) + "/",
-					})
-
-				}
-
-			} else {
-				result = append(result, Content{
-					ObsidianIdentifier: relPath,
-					HugoIdentifier:     "/" + relPath,
-				})
-			}
+			result = append(result, Content{
+				FrontMatter: getFrontMatter(path),
+				Body:        "", // TODO: Add body
+				dirEntry:    d,
+				fileInfo:    fi,
+				permalink:   permalink,
+				relPath:     relPath,
+			})
 
 			return nil
 		},
@@ -94,10 +108,10 @@ func expandPermalink(permalink string, time time.Time, filename string) string {
 	return result
 }
 
-func getTimeFromFile(path string) (time.Time, error) {
+func getFrontMatter(path string) map[string]string {
 	f, err := os.Open(path)
 	if err != nil {
-		return time.Time{}, err
+		return nil
 	}
 
 	s := bufio.NewScanner(f)
@@ -124,15 +138,5 @@ func getTimeFromFile(path string) (time.Time, error) {
 	// suppress error as time.Parse can handle it
 	_ = yaml.Unmarshal([]byte(frontMatter), &frontMap)
 
-	t, err := time.Parse("2006-01-02 15:04:05 -0700", frontMap["date"])
-	if err == nil {
-		return t, nil
-	}
-
-	stat, err := os.Stat(path)
-	if err != nil {
-		return time.Time{}, err
-	}
-
-	return stat.ModTime(), err
+	return frontMap
 }

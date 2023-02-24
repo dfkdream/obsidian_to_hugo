@@ -1,9 +1,8 @@
-package contentList
+package content
 
 import (
 	"obsidian_md/config"
 	"os"
-	"reflect"
 	"testing"
 	"time"
 )
@@ -14,6 +13,11 @@ func TestFromDirectory(t *testing.T) {
 	fTime := time.Date(2023, time.February, 23, 23, 16, 25, 822648616, loc)
 	_ = os.Chtimes("../test_site/content/posts2/post5.md", fTime, fTime)
 
+	type contentTest struct {
+		ObsidianIdentifier string
+		HugoIdentifier     string
+	}
+
 	type args struct {
 		path   string
 		config config.Config
@@ -21,7 +25,7 @@ func TestFromDirectory(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []Content
+		want    []contentTest
 		wantErr bool
 	}{
 		{
@@ -30,7 +34,7 @@ func TestFromDirectory(t *testing.T) {
 				path:   "../test_site/content",
 				config: testSiteConfig,
 			},
-			want: []Content{
+			want: []contentTest{
 				{
 					ObsidianIdentifier: "outside_posts",
 					HugoIdentifier:     "/outside_posts/",
@@ -78,53 +82,12 @@ func TestFromDirectory(t *testing.T) {
 				t.Errorf("FromDirectory() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromDirectory() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
-func Test_getTimeFromFile(t *testing.T) {
-	loc, _ := time.LoadLocation("Asia/Seoul")
-	fTime := time.Date(2023, time.February, 23, 23, 16, 25, 822648616, loc)
-	_ = os.Chtimes("../test_site/content/posts2/post5.md", fTime, fTime)
-
-	type args struct {
-		path string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    time.Time
-		wantErr bool
-	}{
-		{
-			name: "with front matter",
-			args: args{
-				path: "../test_site/content/posts/post1.md",
-			},
-			want:    time.Date(2023, time.February, 22, 00, 00, 00, 0, loc),
-			wantErr: false,
-		},
-		{
-			name: "without front matter",
-			args: args{
-				path: "../test_site/content/posts2/post5.md",
-			},
-			want:    fTime,
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := getTimeFromFile(tt.args.path)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("getTimeFromFile() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.want.Equal(got) {
-				t.Errorf("getTimeFromFile() got = %v, want %v", got, tt.want)
+			for idx, v := range tt.want {
+				if v.HugoIdentifier != got[idx].HugoIdentifier() || v.ObsidianIdentifier != got[idx].ObsidianIdentifier() {
+					t.Errorf("FromDirectory() got = %v, want %v", got, tt.want)
+					return
+				}
 			}
 		})
 	}
