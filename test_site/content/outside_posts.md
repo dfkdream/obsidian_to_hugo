@@ -7,3 +7,6 @@ test
 [[posts/subdirectory/post_with_same_filename]]
 [[post1]]
 [[posts/post_with_same_filename]]
+---
+hello world!
+---

@@ -75,14 +75,13 @@ func FromDirectory(root string, config config.Config) ([]Content, error) {
 			relPath, _ := filepath.Rel(root, path)
 			fi, _ := os.Stat(path)
 
-			result = append(result, Content{
-				FrontMatter: getFrontMatter(path),
-				Body:        "", // TODO: Add body
-				dirEntry:    d,
-				fileInfo:    fi,
-				permalink:   permalink,
-				relPath:     relPath,
-			})
+			c, err := fromFile(path)
+			c.dirEntry = d
+			c.fileInfo = fi
+			c.permalink = permalink
+			c.relPath = relPath
+
+			result = append(result, c)
 
 			return nil
 		},
@@ -96,6 +95,7 @@ func FromDirectory(root string, config config.Config) ([]Content, error) {
 }
 
 func expandPermalink(permalink string, time time.Time, filename string) string {
+	// TODO: Need to support all permalink parameters available
 	result := permalink
 	result = strings.ReplaceAll(result, ":2006", fmt.Sprintf("%04d", time.Year()))
 	result = strings.ReplaceAll(result, ":01", fmt.Sprintf("%02d", time.Month()))
@@ -104,35 +104,35 @@ func expandPermalink(permalink string, time time.Time, filename string) string {
 	return result
 }
 
-func getFrontMatter(path string) map[string]string {
+func fromFile(path string) (Content, error) {
+	var result Content
+
 	f, err := os.Open(path)
 	if err != nil {
-		return nil
+		return Content{}, err
 	}
 
 	s := bufio.NewScanner(f)
 
 	frontMatter := ""
-	needToAdd := false
-	for s.Scan() {
-		if s.Text() == "---" {
-			if !needToAdd {
-				needToAdd = true
-				continue
-			} else {
-				break
-			}
-		}
+	body := ""
 
-		if needToAdd {
+	if s.Scan() && s.Text() == "---" { //has frontMatter
+		for s.Scan() && s.Text() != "---" {
 			frontMatter += s.Text() + "\n"
 		}
+	}
+
+	for s.Scan() {
+		body += s.Text() + "\n"
 	}
 
 	frontMap := make(map[string]string)
 
 	// suppress error as time.Parse can handle it
 	_ = yaml.Unmarshal([]byte(frontMatter), &frontMap)
+	result.FrontMatter = frontMap
+	result.Body = body[:len(body)-1] // remove trailing newline
 
-	return frontMap
+	return result, nil
 }

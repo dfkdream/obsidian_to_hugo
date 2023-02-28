@@ -3,6 +3,7 @@ package content
 import (
 	"obsidian_md/config"
 	"os"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -88,6 +89,55 @@ func TestFromDirectory(t *testing.T) {
 					t.Errorf("FromDirectory() got = %v, want %v", got, tt.want)
 					return
 				}
+			}
+		})
+	}
+}
+
+func Test_fromFile(t *testing.T) {
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Content
+		wantErr bool
+	}{
+		{
+			name: "outside_post",
+			args: args{
+				path: "../test_site/content/outside_posts.md",
+			},
+			want: Content{
+				FrontMatter: map[string]string{
+					"title": "outside_posts",
+					"date":  "2023-02-24 00:00:00 +0900",
+				},
+				Body: `
+test
+[[posts/subdirectory/post_with_same_filename]]
+[[post1]]
+[[posts/post_with_same_filename]]
+---
+hello world!
+---`,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := fromFile(tt.args.path)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("fromFile() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got.FrontMatter, tt.want.FrontMatter) {
+				t.Errorf("FrontMatter got = %v, want %v", got.FrontMatter, tt.want.FrontMatter)
+			}
+			if got.Body != tt.want.Body {
+				t.Errorf("Body got = %v, want %v", got.Body, tt.want.Body)
 			}
 		})
 	}
