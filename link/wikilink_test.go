@@ -69,7 +69,7 @@ func TestWikiLinkFromString(t *testing.T) {
 		{
 			name: "multiple wikilinks",
 			args: args{
-				s: "[[hello world#hi|hello]] hello world[][[][]][[foo|bar]][[lorem#ipsum|dolor]]",
+				s: "[[hello world#hi|hello]] hello world[][[][]][[foo|bar]][X][ ][[lorem#ipsum|dolor]]",
 			},
 			want: []Link{
 				{
