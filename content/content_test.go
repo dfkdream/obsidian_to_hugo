@@ -1,7 +1,7 @@
 package content
 
 import (
-	"obsidian_md/config"
+	"obsidian_to_hugo/config"
 	"os"
 	"reflect"
 	"testing"

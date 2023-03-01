@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"io/fs"
-	"obsidian_md/config"
+	"obsidian_to_hugo/config"
 	"os"
 	"path/filepath"
 	"strings"

@@ -1,4 +1,4 @@
-module obsidian_md
+module obsidian_to_hugo
 
 go 1.19
 
