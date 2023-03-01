@@ -125,6 +125,17 @@ hello world!
 			},
 			wantErr: false,
 		},
+		{
+			name: "empty_post",
+			args: args{
+				path: "../test_site/content/posts2/post5.md",
+			},
+			want: Content{
+				FrontMatter: map[string]string{},
+				Body:        ``,
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

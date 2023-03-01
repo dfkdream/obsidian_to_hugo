@@ -132,7 +132,10 @@ func fromFile(path string) (Content, error) {
 	// suppress error as time.Parse can handle it
 	_ = yaml.Unmarshal([]byte(frontMatter), &frontMap)
 	result.FrontMatter = frontMap
-	result.Body = body[:len(body)-1] // remove trailing newline
+
+	if len(body) > 1 {
+		result.Body = body[:len(body)-1] // remove trailing newline
+	}
 
 	return result, nil
 }
