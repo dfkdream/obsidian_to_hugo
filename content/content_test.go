@@ -153,3 +153,27 @@ hello world!
 		})
 	}
 }
+
+func TestContent_Path(t *testing.T) {
+	testSiteConfig, _ := config.FromFile("../test_site/config.yml")
+	contents, _ := FromDirectory("../test_site/content", testSiteConfig)
+
+	tests := []struct {
+		name   string
+		fields Content
+		want   string
+	}{
+		{
+			name:   "outside_posts",
+			fields: contents[0],
+			want:   "../test_site/content/outside_posts.md",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.fields.Path(); got != tt.want {
+				t.Errorf("Path() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

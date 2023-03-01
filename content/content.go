@@ -19,6 +19,7 @@ type Content struct {
 	fileInfo    os.FileInfo
 	permalink   string
 	relPath     string
+	path        string
 }
 
 func (c Content) HugoIdentifier() string {
@@ -42,6 +43,10 @@ func (c Content) HugoIdentifier() string {
 
 func (c Content) ObsidianIdentifier() string {
 	return strings.TrimSuffix(c.relPath, ".md")
+}
+
+func (c Content) Path() string {
+	return c.path
 }
 
 func FromDirectory(root string, config config.Config) ([]Content, error) {
@@ -80,6 +85,7 @@ func FromDirectory(root string, config config.Config) ([]Content, error) {
 			c.fileInfo = fi
 			c.permalink = permalink
 			c.relPath = relPath
+			c.path = path
 
 			result = append(result, c)
 
