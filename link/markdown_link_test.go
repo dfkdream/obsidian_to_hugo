@@ -57,6 +57,13 @@ func TestMarkdownLinkFromString(t *testing.T) {
 			},
 		},
 		{
+			name: "invalid link",
+			args: args{
+				s: "[hello](hello world)",
+			},
+			want: []Link{},
+		},
+		{
 			name: "multiple markdown links",
 			args: args{
 				s: "[hello world](hello-world)[X][ ][[]][external](https://blog.dfkdream.dev/)hi[hello world hi](hello-world#hi)",

@@ -7,7 +7,7 @@ import (
 
 func MarkdownLinkFromString(s string) []Link {
 	// TODO: Need to find something better than regex
-	re := regexp.MustCompile(`\[([^\[^\]]*?)]\((.*?)\)`)
+	re := regexp.MustCompile(`\[([^\[\]]+?)]\(([^ ]*?)\)`)
 	matches := re.FindAllStringSubmatch(s, -1)
 	result := make([]Link, len(matches))
 
@@ -22,6 +22,7 @@ func MarkdownLinkFromString(s string) []Link {
 		}
 
 		result[i].Reference = ref
+		result[i].Original = v[0]
 	}
 
 	return result
