@@ -17,26 +17,28 @@ func TestMarkdownLinkFromString(t *testing.T) {
 		{
 			name: "reference with alt",
 			args: args{
-				s: "[hello world](hello world)",
+				s: "[hello world](hello-world)",
 			},
 			want: []Link{
 				{
-					Reference: "hello world",
+					Reference: "hello-world",
 					Alt:       "hello world",
 					Heading:   "",
+					Original:  "[hello world](hello-world)",
 				},
 			},
 		},
 		{
 			name: "reference with heading and alt",
 			args: args{
-				s: "[hello world hi](hello world#hi)",
+				s: "[hello world hi](hello-world#hi)",
 			},
 			want: []Link{
 				{
-					Reference: "hello world",
+					Reference: "hello-world",
 					Alt:       "hello world hi",
 					Heading:   "hi",
+					Original:  "[hello world hi](hello-world#hi)",
 				},
 			},
 		},
@@ -50,29 +52,33 @@ func TestMarkdownLinkFromString(t *testing.T) {
 					Reference: "https://blog.dfkdream.dev/",
 					Alt:       "external",
 					Heading:   "",
+					Original:  "[external](https://blog.dfkdream.dev/)",
 				},
 			},
 		},
 		{
 			name: "multiple markdown links",
 			args: args{
-				s: "[hello world](hello world)[X][ ][[]][external](https://blog.dfkdream.dev/)hi[hello world hi](hello world#hi)",
+				s: "[hello world](hello-world)[X][ ][[]][external](https://blog.dfkdream.dev/)hi[hello world hi](hello-world#hi)",
 			},
 			want: []Link{
 				{
-					Reference: "hello world",
+					Reference: "hello-world",
 					Alt:       "hello world",
 					Heading:   "",
+					Original:  "[hello world](hello-world)",
 				},
 				{
 					Reference: "https://blog.dfkdream.dev/",
 					Alt:       "external",
 					Heading:   "",
+					Original:  "[external](https://blog.dfkdream.dev/)",
 				},
 				{
-					Reference: "hello world",
+					Reference: "hello-world",
 					Alt:       "hello world hi",
 					Heading:   "hi",
+					Original:  "[hello world hi](hello-world#hi)",
 				},
 			},
 		},
