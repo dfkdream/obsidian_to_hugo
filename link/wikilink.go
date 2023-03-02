@@ -25,6 +25,7 @@ func WikiLinkFromString(s string) []Link {
 		}
 
 		result[i].Reference = ref
+		result[i].Original = v[0]
 	}
 
 	return result
