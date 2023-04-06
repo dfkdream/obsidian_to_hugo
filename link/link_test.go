@@ -64,6 +64,16 @@ func TestLink_MarkdownLink(t *testing.T) {
 			},
 			want: "[world](hello-world-hi#hi)",
 		},
+		{
+			name: "unicode link",
+			fields: fields{
+				Reference: "안녕 hello 세상 world (hi)",
+				Alt:       "안녕 world",
+				Heading:   "한글 (hangul) 헤딩(heading)  링크 테스트",
+				Original:  "",
+			},
+			want: "[안녕 world](안녕-hello-세상-world-hi#한글-hangul-헤딩heading--링크-테스트)",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
