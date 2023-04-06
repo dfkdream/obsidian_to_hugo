@@ -1,7 +1,5 @@
 package link
 
-import "strings"
-
 type Link struct {
 	Reference string
 	Alt       string
@@ -18,9 +16,9 @@ func (l Link) MarkdownLink() string {
 		}
 	}
 	result += l.Alt + "]("
-	result += escapeString(l.Reference)
+	result += sanitizeString(l.Reference)
 	if l.Heading != "" {
-		result += "#" + l.Heading
+		result += "#" + sanitizeString(l.Heading)
 	}
 	result += ")"
 	return result
@@ -36,33 +34,4 @@ func (l Link) WikiLink() string {
 	}
 	result += "]]"
 	return result
-}
-
-func isMarkdownEligibleCharacter(c rune) bool {
-	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-"
-
-	if strings.ContainsRune(chars, c) {
-		return true
-	}
-
-	return false
-}
-
-func escapeString(s string) string {
-	result := ""
-	needToSkip := false
-	for _, c := range s {
-		if !isMarkdownEligibleCharacter(c) {
-			if !needToSkip {
-				needToSkip = true
-				result += "-"
-			}
-			continue
-		}
-
-		result += string(c)
-		needToSkip = false
-	}
-
-	return strings.Trim(result, "-")
 }
