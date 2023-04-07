@@ -60,11 +60,14 @@ func FromDirectory(root string, config config.Config) ([]Content, error) {
 
 	err := filepath.WalkDir(root,
 		func(path string, d fs.DirEntry, err error) error {
+
+			// Skip dot and ignored directories
 			if d.IsDir() && (d.Name()[0] == '.' || ignoreMap[d.Name()]) {
 				return filepath.SkipDir
 			}
 
-			if d.IsDir() {
+			// Omit directories and dot files
+			if d.IsDir() || d.Name()[0] == '.' {
 				return nil
 			}
 
