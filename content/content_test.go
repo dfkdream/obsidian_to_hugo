@@ -61,6 +61,10 @@ func TestFromDirectory(t *testing.T) {
 					HugoIdentifier:     "/2023/02/25/post_with_same_filename/",
 				},
 				{
+					ObsidianIdentifier: "posts/post_with_유니코드 and   (multiple  spaces)",
+					HugoIdentifier:     "/2023/02/25/post_with_유니코드-and---multiple--spaces/",
+				},
+				{
 					ObsidianIdentifier: "posts/subdirectory/post_with_same_filename",
 					HugoIdentifier:     "/2023/02/26/post_with_same_filename/",
 				},
