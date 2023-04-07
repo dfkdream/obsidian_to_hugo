@@ -119,6 +119,10 @@ func expandPermalink(permalink string, time time.Time, filename string) string {
 func fromFile(path string) (Content, error) {
 	var result Content
 
+	if !strings.HasSuffix(path, ".md") {
+		return result, nil
+	}
+
 	f, err := os.Open(path)
 	if err != nil {
 		return Content{}, err
