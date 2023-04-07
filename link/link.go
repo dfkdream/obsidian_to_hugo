@@ -1,10 +1,20 @@
 package link
 
+import "strings"
+
 type Link struct {
 	Reference string
 	Alt       string
 	Heading   string
 	Original  string
+}
+
+func (l Link) isInternal() bool {
+	if strings.HasPrefix(l.Reference, "http://") ||
+		strings.HasPrefix(l.Reference, "https://") {
+		return false
+	}
+	return true
 }
 
 func (l Link) MarkdownLink() string {
@@ -16,9 +26,13 @@ func (l Link) MarkdownLink() string {
 		}
 	}
 	result += l.Alt + "]("
-	result += sanitizeString(l.Reference)
+	result += l.Reference
 	if l.Heading != "" {
-		result += "#" + sanitizeString(l.Heading)
+		if l.isInternal() {
+			result += "#" + sanitizeString(l.Heading)
+		} else {
+			result += "#" + l.Heading
+		}
 	}
 	result += ")"
 	return result
