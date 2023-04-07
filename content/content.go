@@ -16,11 +16,27 @@ import (
 type Content struct {
 	FrontMatter map[string]string
 	Body        string
+	IsMarkdown  bool
 	dirEntry    os.DirEntry
 	fileInfo    os.FileInfo
 	permalink   string
 	relPath     string
 	path        string
+}
+
+func (c Content) ToString() (string, error) {
+	var result strings.Builder
+
+	result.WriteString("---\n")
+	m, err := yaml.Marshal(c.FrontMatter)
+	if err != nil {
+		return "", err
+	}
+	result.Write(m)
+	result.WriteString("---\n")
+	result.WriteString(c.Body)
+
+	return result.String(), nil
 }
 
 func (c Content) HugoIdentifier() string {
@@ -117,9 +133,12 @@ func expandPermalink(permalink string, time time.Time, filename string) string {
 }
 
 func fromFile(path string) (Content, error) {
-	var result Content
+	result := Content{
+		IsMarkdown: true,
+	}
 
 	if !strings.HasSuffix(path, ".md") {
+		result.IsMarkdown = false
 		return result, nil
 	}
 
@@ -127,6 +146,7 @@ func fromFile(path string) (Content, error) {
 	if err != nil {
 		return Content{}, err
 	}
+	defer f.Close()
 
 	s := bufio.NewScanner(f)
 
