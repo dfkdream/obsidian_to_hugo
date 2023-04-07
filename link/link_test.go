@@ -15,6 +15,16 @@ func TestLink_MarkdownLink(t *testing.T) {
 		want   string
 	}{
 		{
+			name: "Upper and lower case heading",
+			fields: fields{
+				Reference: "",
+				Alt:       "",
+				Heading:   "Link To File",
+				Original:  "",
+			},
+			want: "[#Link To File](#link-to-file)",
+		},
+		{
 			name: "reference only",
 			fields: fields{
 				Reference: "hello",

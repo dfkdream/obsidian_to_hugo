@@ -31,7 +31,7 @@ func SanitizeString(s string) string {
 		case r == '-' || r == ' ':
 			result.WriteRune('-')
 		case isAlphaNumeric(r):
-			result.WriteRune(r)
+			result.WriteRune(unicode.ToLower(r))
 		default:
 		}
 	}
