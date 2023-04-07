@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"io/fs"
 	"obsidian_to_hugo/config"
+	"obsidian_to_hugo/utils"
 	"os"
 	"path/filepath"
 	"strings"
@@ -24,7 +25,7 @@ type Content struct {
 
 func (c Content) HugoIdentifier() string {
 	if !strings.HasSuffix(c.dirEntry.Name(), ".md") {
-		return "/" + c.relPath
+		return utils.NormalizeNFD("/" + c.relPath)
 	}
 
 	if c.permalink == "" {
@@ -32,6 +33,8 @@ func (c Content) HugoIdentifier() string {
 	}
 
 	trimmedName := strings.TrimSuffix(c.dirEntry.Name(), ".md")
+	trimmedName = utils.SanitizeString(trimmedName)
+	trimmedName = utils.NormalizeNFD(trimmedName)
 
 	t, err := time.Parse("2006-01-02 15:04:05 -0700", c.FrontMatter["date"])
 	if err != nil {
@@ -42,7 +45,7 @@ func (c Content) HugoIdentifier() string {
 }
 
 func (c Content) ObsidianIdentifier() string {
-	return strings.TrimSuffix(c.relPath, ".md")
+	return utils.NormalizeNFD(strings.TrimSuffix(c.relPath, ".md"))
 }
 
 func (c Content) Path() string {
