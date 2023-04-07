@@ -13,7 +13,7 @@
 
 // Reference: https://github.com/gohugoio/hugo/blob/f1e8f010f5f5990c6e172b977e5e2d2878b9a338/markup/goldmark/autoid.go
 
-package link
+package utils
 
 import (
 	"strings"
@@ -24,7 +24,7 @@ func isAlphaNumeric(r rune) bool {
 	return r == '_' || unicode.IsLetter(r) || unicode.IsDigit(r)
 }
 
-func sanitizeString(s string) string {
+func SanitizeString(s string) string {
 	var result strings.Builder
 	for _, r := range s {
 		switch {

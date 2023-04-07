@@ -1,6 +1,9 @@
 package link
 
-import "strings"
+import (
+	"obsidian_to_hugo/utils"
+	"strings"
+)
 
 type Link struct {
 	Reference string
@@ -29,7 +32,7 @@ func (l Link) MarkdownLink() string {
 	result += l.Reference
 	if l.Heading != "" {
 		if l.isInternal() {
-			result += "#" + sanitizeString(l.Heading)
+			result += "#" + utils.SanitizeString(l.Heading)
 		} else {
 			result += "#" + l.Heading
 		}
