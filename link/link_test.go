@@ -55,14 +55,14 @@ func TestLink_MarkdownLink(t *testing.T) {
 			want: "[world](hello#hi)",
 		},
 		{
-			name: "markdown-invalid link",
+			name: "inter-directory link",
 			fields: fields{
-				Reference: "hello world (hi)",
-				Alt:       "world",
-				Heading:   "hi",
+				Reference: "posts2/post5",
+				Alt:       "",
+				Heading:   "example heading",
 				Original:  "",
 			},
-			want: "[world](hello-world-hi#hi)",
+			want: "[posts2/post5#example heading](posts2/post5#example-heading)",
 		},
 		{
 			name: "unicode link",
@@ -72,7 +72,17 @@ func TestLink_MarkdownLink(t *testing.T) {
 				Heading:   "한글 (hangul) 헤딩(heading)  링크 테스트",
 				Original:  "",
 			},
-			want: "[안녕 world](안녕-hello-세상-world-hi#한글-hangul-헤딩heading--링크-테스트)",
+			want: "[안녕 world](안녕 hello 세상 world (hi)#한글-hangul-헤딩heading--링크-테스트)",
+		},
+		{
+			name: "http link",
+			fields: fields{
+				Reference: "https://blog.dfkdream.dev",
+				Alt:       "",
+				Heading:   "(test)",
+				Original:  "",
+			},
+			want: "[https://blog.dfkdream.dev#(test)](https://blog.dfkdream.dev#(test))",
 		},
 	}
 	for _, tt := range tests {
